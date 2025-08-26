@@ -1,0 +1,1192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phish Guard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f0f2f5; /* Light gray background */
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .navbar {
+            background-color: #ffffff;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            padding: 1rem 0;
+        }
+        .navbar-brand {
+            font-weight: 600;
+            color: #333;
+            display: flex;
+            align-items: center;
+        }
+        .navbar-brand img {
+            height: 70px;
+            margin-right: 10px;
+        }
+        .card {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            margin-bottom: 1.5rem;
+        }
+        .card-header {
+            background-color: #f8f9fa;
+            border-bottom: 1px solid #e9ecef;
+            border-top-left-radius: 12px;
+            border-top-right-radius: 12px;
+            font-weight: 600;
+            color: #333;
+            padding: 1rem 1.5rem;
+            display: flex;
+            align-items: center;
+        }
+        .card-header i {
+            margin-right: 10px;
+            color: #007bff;
+        }
+        .btn-primary {
+            background-color: #007bff;
+            border-color: #007bff;
+            border-radius: 8px;
+            padding: 0.75rem 1.5rem;
+            font-weight: 600;
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+        }
+        .btn-primary:hover {
+            background-color: #0056b3;
+            border-color: #0056b3;
+        }
+        .btn-outline-secondary {
+            border-radius: 8px;
+            font-weight: 600;
+        }
+        .form-control {
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+            border: 1px solid #ced4da;
+        }
+        .form-control:focus {
+            border-color: #80bdff;
+            box-shadow: 0 0 0 0.25rem rgba(0, 123, 255, 0.25);
+        }
+        .progress {
+            height: 25px;
+            border-radius: 12px;
+            background-color: #e9ecef;
+        }
+        .progress-bar {
+            border-radius: 12px;
+            font-weight: 600;
+            color: white;
+            text-align: center;
+            transition: width 0.6s ease;
+        }
+        .bg-safe { background-color: #28a745 !important; } /* Green */
+        .bg-phishing { background-color: #dc3545 !important; } /* Red */
+        .text-safe { color: #28a745 !important; }
+        .text-phishing { color: #dc3545 !important; }
+        .alert-safe { background-color: #d4edda; border-color: #c3e6cb; color: #155724; }
+        .alert-phishing { background-color: #f8d7da; border-color: #f5c6cb; color: #721c24; }
+        .nav-tabs .nav-link {
+            border: none;
+            border-radius: 8px 8px 0 0;
+            color: #6c757d;
+            font-weight: 600;
+            padding: 0.75rem 1.25rem;
+            margin-right: 5px;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        .nav-tabs .nav-link.active {
+            background-color: #007bff;
+            color: white;
+        }
+        .nav-tabs .nav-link:hover:not(.active) {
+            background-color: #e9ecef;
+            color: #333;
+        }
+        .detailed-report-tabs .nav-link {
+            background-color: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-bottom: none;
+            border-radius: 8px 8px 0 0;
+            margin-right: 5px;
+            color: #495057;
+        }
+        .detailed-report-tabs .nav-link.active {
+            background-color: #ffffff;
+            border-color: #e9ecef;
+            border-bottom-color: #ffffff;
+            color: #007bff;
+        }
+        .detailed-report-content {
+            border: 1px solid #e9ecef;
+            border-top: none;
+            border-bottom-left-radius: 12px;
+            border-bottom-right-radius: 12px;
+            padding: 1.5rem;
+            background-color: #ffffff;
+        }
+        .how-it-works-item {
+            text-align: center;
+            padding: 1.5rem;
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            height: 100%;
+        }
+        .how-it-works-item i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: #007bff;
+        }
+        .how-it-works-item h5 {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 0.75rem;
+        }
+        .how-it-works-item p {
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+        .icon-nlp { color: #6f42c1; } /* Purple */
+        .icon-ml { color: #20c997; } /* Teal */
+        .icon-risk { color: #fd7e14; } /* Orange */
+
+        /* Custom styles for detailed report */
+        .analysis-metric {
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            padding: 1rem;
+            text-align: center;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+            transition: transform 0.2s ease;
+        }
+        .analysis-metric:hover {
+            transform: translateY(-3px);
+        }
+        .analysis-metric i {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+        .metric-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #333;
+        }
+        .metric-label {
+            font-size: 0.85rem;
+            color: #6c757d;
+        }
+        .urgency-bar-container {
+            background-color: #e9ecef;
+            border-radius: 5px;
+            height: 10px;
+            margin-top: 0.5rem;
+            overflow: hidden;
+        }
+        .urgency-bar {
+            height: 100%;
+            background-color: #ffc107; /* Warning color */
+            transition: width 0.5s ease-in-out;
+        }
+        .badge-custom {
+            padding: 0.5em 0.8em;
+            border-radius: 5px;
+            font-size: 0.85em;
+            font-weight: 600;
+            margin: 0.25rem;
+            display: inline-flex;
+            align-items: center;
+        }
+        .badge-custom i {
+            margin-right: 0.3em;
+            font-size: 0.9em;
+        }
+        .badge-safe { background-color: #d4edda; color: #155724; }
+        .badge-warning { background-color: #fff3cd; color: #664d03; }
+        .badge-danger { background-color: #f8d7da; color: #721c24; }
+        .badge-info { background-color: #cfe2ff; color: #055160; }
+        .list-group-item-url {
+            display: flex;
+            align-items: center;
+            word-break: break-all;
+        }
+        .list-group-item-url i {
+            margin-right: 0.5rem;
+            color: #007bff;
+        }
+        .list-group-item-url a {
+            color: #007bff;
+            text-decoration: none;
+        }
+        .list-group-item-url a:hover {
+            text-decoration: underline;
+        }
+        /* New styles for scanned emails */
+        .scanned-email-card {
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+        }
+        .scanned-email-card .card-body {
+            padding: 1rem;
+        }
+        .scanned-email-card .card-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        .scanned-email-card .card-subtitle {
+            font-size: 0.9rem;
+            color: #6c757d;
+            margin-bottom: 0.5rem;
+        }
+        .scanned-email-card .status-badge {
+            padding: 0.4em 0.7em;
+            border-radius: 5px;
+            font-size: 0.8em;
+            font-weight: 700;
+            margin-left: 0.5rem;
+        }
+        .scanned-email-card .status-badge.bg-phishing { background-color: #dc3545; color: white; }
+        .scanned-email-card .status-badge.bg-safe { background-color: #28a745; color: white; }
+        .scanned-email-card .email-meta {
+            font-size: 0.85rem;
+            color: #6c757d;
+        }
+        .scanned-email-card .email-meta i {
+            margin-right: 0.3rem;
+        }
+        .scanned-email-card .btn-view-details {
+            font-size: 0.85rem;
+            padding: 0.4rem 0.8rem;
+            border-radius: 5px;
+        }
+        .scanned-email-card .detailed-analysis-collapse {
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-top: 1rem;
+        }
+        .scanned-email-card .detailed-analysis-collapse ul {
+            list-style: none;
+            padding-left: 0;
+            margin-bottom: 0;
+        }
+        .scanned-email-card .detailed-analysis-collapse ul li {
+            font-size: 0.85rem;
+            margin-bottom: 0.3rem;
+        }
+        .scanned-email-card .detailed-analysis-collapse ul li strong {
+            color: #333;
+        }
+        .avoidance-advice-section {
+            background-color: #fff3cd; /* Light yellow for warning */
+            border-left: 5px solid #ffc107; /* Yellow border */
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 1.5rem;
+        }
+        .avoidance-advice-section h6 {
+            color: #664d03; /* Dark yellow text */
+            margin-bottom: 0.75rem;
+        }
+        .avoidance-advice-section ul {
+            list-style: disc;
+            padding-left: 20px;
+            margin-bottom: 0;
+        }
+        .avoidance-advice-section ul li {
+            margin-bottom: 0.5rem;
+            color: #664d03;
+        }
+        footer {
+            background-color: #f8f9fa;
+            color: #6c757d;
+            padding: 2rem 0;
+            margin-top: 3rem;
+            border-top: 1px solid #e9ecef;
+        }
+        footer a {
+            color: #007bff;
+            text-decoration: none;
+        }
+        footer a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <img src="{{ url_for('static', filename='logo.png') }}" alt="PhishGuard Logo">
+            </a>
+            <span class="navbar-text ms-auto me-3 d-none d-md-block">
+                Advanced NLP-powered email phishing detection using machine learning algorithms
+            </span>
+            <div class="d-flex align-items-center">
+                <!-- User Status / Connect Button -->
+                <button id="userStatusButton" class="btn btn-outline-secondary me-3" onclick="handleUserStatusClick()">
+                    <i class="fas fa-user-circle me-1"></i> Guest
+                </button>
+                <button class="btn btn-outline-secondary" onclick="checkHealth()">
+                    <i class="fas fa-heartbeat"></i> System Status
+                </button>
+                <button id="logoutButton" class="btn btn-outline-danger ms-2 d-none" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <!-- Navigation Tabs -->
+        <ul class="nav nav-tabs mb-4" id="mainTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="analyze-tab" data-bs-toggle="tab" data-bs-target="#analyze" type="button">
+                    <i class="fas fa-search"></i> Analyze Email
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="scan-tab" data-bs-toggle="tab" data-bs-target="#scan" type="button">
+                    <i class="fas fa-envelope"></i> Scan Emails
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="connect-inbox-tab" data-bs-toggle="tab" data-bs-target="#connect-inbox" type="button">
+                    <i class="fas fa-plug"></i> Connect Inbox
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="train-tab" data-bs-toggle="tab" data-bs-target="#train" type="button">
+                    <i class="fas fa-brain"></i> Train Model
+                </button>
+            </li>
+        </ul>
+
+        <!-- Tab Content -->
+        <div class="tab-content">
+            <!-- Analyze Email Tab -->
+            <div class="tab-pane fade show active" id="analyze" role="tabpanel">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <i class="fas fa-envelope-open-text"></i> Email Analysis Input
+                            </div>
+                            <div class="card-body">
+                                <p class="text-muted small mb-3">Paste the email content below for comprehensive phishing analysis</p>
+                                <form id="analyzeForm">
+                                    <div class="mb-3">
+                                        <label for="senderEmail" class="form-label">Sender Email</label>
+                                        <input type="email" class="form-control" id="senderEmail" 
+                                               placeholder="e.g., support@example.com">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="emailSubject" class="form-label">Subject Line</label>
+                                        <input type="text" class="form-control" id="emailSubject" 
+                                               placeholder="Enter email subject..." required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="emailBody" class="form-label">Email Content</label>
+                                        <textarea class="form-control" id="emailBody" rows="10" 
+                                                  placeholder="Enter email content..." required></textarea>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary w-100">
+                                        <i class="fas fa-chart-line"></i> Analyze Email
+                                    </button>
+                                </form>
+                                <!-- Quick Test Examples -->
+                                <div class="mt-4">
+                                    <h6>Quick Test Examples:</h6>
+                                    <div class="d-grid gap-2">
+                                        <button class="btn btn-outline-danger btn-sm" onclick="loadPhishingExample()">
+                                            Load Phishing Example
+                                        </button>
+                                        <button class="btn btn-outline-success btn-sm" onclick="loadLegitimateExample()">
+                                            Load Legitimate Example
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header">
+                                <i class="fas fa-chart-bar"></i> Analysis Results
+                            </div>
+                            <div class="card-body">
+                                <div id="analysisResults">
+                                    <div class="text-center text-muted py-5">
+                                        <i class="fas fa-info-circle fa-3x mb-3"></i>
+                                        <p>Enter email content and click "Analyze Email" to see results</p>
+                                        <small class="text-muted">Make sure to train a model first!</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Detailed Analysis Report -->
+                <div class="card mt-4">
+                    <div class="card-header">
+                        <i class="fas fa-file-alt"></i> Detailed Analysis Report
+                    </div>
+                    <div class="card-body">
+                        <p class="text-muted small mb-4">Comprehensive breakdown of NLP and ML analysis results</p>
+                        <ul class="nav nav-tabs detailed-report-tabs" id="detailedReportTabs" role="tablist">
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link active" id="risk-indicators-tab" data-bs-toggle="tab" data-bs-target="#risk-indicators" type="button">
+                                    Risk Indicators
+                                </button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="keywords-tab" data-bs-toggle="tab" data-bs-target="#keywords" type="button">
+                                    Keywords
+                                </button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="url-analysis-tab" data-bs-toggle="tab" data-bs-target="#url-analysis" type="button">
+                                    URL Analysis
+                                </button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="sender-analysis-tab" data-bs-toggle="tab" data-bs-target="#sender-analysis" type="button">
+                                    Sender Analysis
+                                </button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="avoidance-advice-tab" data-bs-toggle="tab" data-bs-target="#avoidance-advice" type="button">
+                                    Avoidance Advice
+                                </button>
+                            </li>
+                        </ul>
+                        <div class="tab-content detailed-report-content" id="detailedReportContent">
+                            <div class="tab-pane fade show active" id="risk-indicators" role="tabpanel">
+                                <div class="row text-center">
+                                    <div class="col-md-4 mb-3">
+                                        <div class="analysis-metric">
+                                            <i class="fas fa-fire text-warning"></i>
+                                            <div class="metric-value" id="urgencyScore">N/A</div>
+                                            <div class="metric-label">Urgency Score (0-10)</div>
+                                            <div class="urgency-bar-container">
+                                                <div class="urgency-bar" id="urgencyProgressBar" style="width: 0%;"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 mb-3">
+                                        <div class="analysis-metric">
+                                            <i class="fas fa-spell-check text-success"></i>
+                                            <div class="metric-value" id="grammarQuality">N/A</div>
+                                            <div class="metric-label">Grammar Quality</div>
+                                            <span id="grammarQualityBadge" class="badge-custom badge-info mt-2"></span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 mb-3">
+                                        <div class="analysis-metric">
+                                            <i class="fas fa-user-shield text-danger"></i>
+                                            <div class="metric-value" id="piiRequests">N/A</div>
+                                            <div class="metric-label">Personal Info Requests</div>
+                                            <span id="piiRequestsBadge" class="badge-custom mt-2"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="tab-pane fade" id="keywords" role="tabpanel">
+                                <h6 class="mb-3">Suspicious Keywords Found (<span id="suspiciousKeywordsCount">0</span>)</h6>
+                                <div id="suspiciousKeywordsList" class="d-flex flex-wrap gap-2">
+                                    <span class="badge-custom badge-info"><i class="fas fa-info-circle"></i>No suspicious keywords detected.</span>
+                                </div>
+                            </div>
+                            <div class="tab-pane fade" id="url-analysis" role="tabpanel">
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <div class="analysis-metric">
+                                            <i class="fas fa-link text-primary"></i>
+                                            <div class="metric-value" id="totalUrlsFound">0</div>
+                                            <div class="metric-label">Total URLs Found</div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <div class="analysis-metric">
+                                            <i class="fas fa-exclamation-circle text-danger"></i>
+                                            <div class="metric-value" id="suspiciousUrlsCount">0</div>
+                                            <div class="metric-label">Suspicious URLs</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <h6 class="mt-4 mb-3">Extracted URLs:</h6>
+                                <ul id="extractedUrls" class="list-group list-group-flush">
+                                    <li class="list-group-item text-muted list-group-item-url"><i class="fas fa-info-circle"></i>No URLs extracted yet.</li>
+                                </ul>
+                            </div>
+                            <div class="tab-pane fade" id="sender-analysis" role="tabpanel">
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <div class="analysis-metric">
+                                            <i class="fas fa-globe text-secondary"></i>
+                                            <div class="metric-value" id="domainReputation">N/A</div>
+                                            <div class="metric-label">Domain Reputation</div>
+                                            <span id="domainReputationBadge" class="badge-custom mt-2"></span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <div class="analysis-metric">
+                                            <i class="fas fa-mask text-dark"></i>
+                                            <div class="metric-value" id="spoofingRisk">N/A</div>
+                                            <div class="metric-label">Spoofing Risk</div>
+                                            <span id="spoofingRiskBadge" class="badge-custom mt-2"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="tab-pane fade" id="avoidance-advice" role="tabpanel">
+                                <div id="avoidanceAdviceContent" class="avoidance-advice-section">
+                                    <h6><i class="fas fa-lightbulb me-2"></i>How to Protect Yourself:</h6>
+                                    <ul id="avoidanceAdviceList">
+                                        <li>No advice generated yet. Analyze an email first.</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- How It Works Section -->
+                <div class="mt-5 text-center">
+                    <h4 class="mb-4 text-primary">How It Works</h4>
+                    <p class="text-muted mb-5">Understanding the phishing detection process</p>
+                    <div class="row">
+                        <div class="col-md-4 mb-4">
+                            <div class="how-it-works-item">
+                                <i class="fas fa-language icon-nlp"></i>
+                                <h5>NLP Processing</h5>
+                                <p>Advanced natural language processing analyzes email content, structure, and linguistic patterns.</p>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-4">
+                            <div class="how-it-works-item">
+                                <i class="fas fa-robot icon-ml"></i>
+                                <h5>ML Classification</h5>
+                                <p>Machine learning models trained on thousands of phishing examples classify threats.</p>
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-4">
+                            <div class="how-it-works-item">
+                                <i class="fas fa-exclamation-triangle icon-risk"></i>
+                                <h5>Risk Assessment</h5>
+                                <p>Comprehensive risk scoring provides actionable insights and recommendations.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Scan Emails Tab -->
+            <div class="tab-pane fade" id="scan" role="tabpanel">
+                <div class="card">
+                    <div class="card-header">
+                        <i class="fas fa-envelope"></i> Email Scanning
+                    </div>
+                    <div class="card-body">
+                        <div id="scanInstructions" class="alert alert-info text-center py-4">
+                            <i class="fas fa-info-circle fa-2x mb-3"></i>
+                            <p class="mb-0">To scan emails from your inbox, please connect your Gmail account first.</p>
+                            <p class="mb-0">Go to the "<i class="fas fa-plug"></i> Connect Inbox" tab to get started.</p>
+                        </div>
+                        <button id="scanButton" class="btn btn-primary w-100 d-none" onclick="scanEmails()">
+                            <i class="fas fa-sync"></i> Scan Connected Accounts (Last 15 Emails)
+                        </button>
+                        <div id="scanResults" class="mt-3">
+                            <div class="text-center text-muted py-5">
+                                <i class="fas fa-inbox fa-3x mb-3"></i>
+                                <p>Scanned emails will appear here.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Connect Inbox Tab -->
+            <div class="tab-pane fade" id="connect-inbox" role="tabpanel">
+                <div class="card">
+                    <div class="card-header">
+                        <i class="fas fa-plug"></i> Connect Your Inbox
+                    </div>
+                    <div class="card-body">
+                        <div id="connectInboxStatus" class="alert alert-info text-center py-4">
+                            <i class="fas fa-info-circle fa-2x mb-3"></i>
+                            <p class="mb-0">Connect your Gmail account to enable direct inbox scanning.</p>
+                            <p class="mb-0">Your emails will be analyzed for phishing threats.</p>
+                        </div>
+                        <button id="connectGmailButton" class="btn btn-danger btn-lg w-100" onclick="connectGmail()">
+                            <i class="fab fa-google"></i> Connect with Gmail
+                        </button>
+                        <button id="disconnectGmailButton" class="btn btn-outline-danger btn-lg w-100 mt-3 d-none" onclick="logout()">
+                            <i class="fas fa-unlink"></i> Disconnect Gmail
+                        </button>
+                        <div class="mt-4 text-muted small">
+                            <p><strong>Note:</strong> This tool only requests read-only access to your emails for analysis. Your email content is not stored permanently.</p>
+                            <p>Ensure your `credentials.json` file is correctly configured on the server for this feature to work.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Train Model Tab -->
+            <div class="tab-pane fade" id="train" role="tabpanel">
+                <div class="card">
+                    <div class="card-header">
+                        <i class="fas fa-brain"></i> Model Training
+                    </div>
+                    <div class="card-body">
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle"></i>
+                            <strong>Important:</strong> Train the model first before analyzing emails. 
+                            This creates a machine learning model using sample phishing and legitimate emails.
+                        </div>
+                        <button class="btn btn-success btn-lg" onclick="trainModel()">
+                            <i class="fas fa-cog"></i> Train New Model
+                        </button>
+                        <div id="trainingResults" class="mt-3"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="bg-light text-center text-lg-start mt-5 py-4">
+        <div class="container p-4">
+            <div class="row">
+                <div class="col-lg-6 col-md-12 mb-4 mb-md-0">
+                    <h5 class="text-uppercase">PhishGuard</h5>
+                    <p>
+                        Your advanced solution for detecting and preventing email phishing attacks.
+                        Leveraging NLP and ML to keep your inbox safe.
+                    </p>
+                </div>
+                <div class="col-lg-3 col-md-6 mb-4 mb-md-0">
+                    <h5 class="text-uppercase">Links</h5>
+                    <ul class="list-unstyled mb-0">
+                        <li>
+                            <a href="{{ url_for('index') }}#analyze" class="text-dark">Analyze Email</a>
+                        </li>
+                        <li>
+                            <a href="{{ url_for('index') }}#scan" class="text-dark">Scan Emails</a>
+                        </li>
+                        <li>
+                            <a href="{{ url_for('index') }}#connect-inbox" class="text-dark">Connect Inbox</a>
+                        </li>
+                        <li>
+                            <a href="{{ url_for('index') }}#train" class="text-dark">Train Model</a>
+                        </li>
+                        <li>
+                            <a href="{{ url_for('about_page') }}" class="text-dark">About</a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="col-lg-3 col-md-6 mb-4 mb-md-0">
+                    <h5 class="text-uppercase">Contact</h5>
+                    <ul class="list-unstyled mb-0">
+                        <li>
+                            <a href="{{ url_for('support_page') }}" class="text-dark">Support</a>
+                        </li>
+                        <li>
+                            <a href="{{ url_for('feedback_page') }}" class="text-dark">Feedback</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="text-center p-3" style="background-color: rgba(0, 0, 0, 0.05);">
+            © 2025 PhishGuard. All rights reserved.
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Global variable to store user email
+        let currentUserEmail = "{{ user_email if user_email else '' }}";
+
+        // Function to update header status and connect button
+        function updateHeaderStatus() {
+            const userStatusButton = document.getElementById('userStatusButton');
+            const logoutButton = document.getElementById('logoutButton');
+            const connectInboxStatusDiv = document.getElementById('connectInboxStatus');
+            const connectGmailButton = document.getElementById('connectGmailButton');
+            const disconnectGmailButton = document.getElementById('disconnectGmailButton');
+            const scanInstructionsDiv = document.getElementById('scanInstructions');
+            const scanButton = document.getElementById('scanButton');
+
+            if (currentUserEmail) {
+                userStatusButton.innerHTML = `<i class="fas fa-user-circle me-1"></i> Connected as ${currentUserEmail}`;
+                userStatusButton.disabled = true; // Make it non-clickable when connected
+                logoutButton.classList.remove('d-none');
+                
+                // Connect Inbox Tab
+                connectInboxStatusDiv.className = 'alert alert-success text-center py-4';
+                connectInboxStatusDiv.innerHTML = `<i class="fas fa-check-circle fa-2x mb-3"></i><p class="mb-0">Successfully connected to Gmail as ${currentUserEmail}.</p>`;
+                connectGmailButton.classList.add('d-none');
+                disconnectGmailButton.classList.remove('d-none');
+
+                // Scan Emails Tab
+                scanInstructionsDiv.classList.add('d-none');
+                scanButton.classList.remove('d-none');
+
+            } else {
+                userStatusButton.innerHTML = `<i class="fas fa-user-circle me-1"></i> Connect to Gmail`;
+                userStatusButton.disabled = false; // Make it clickable
+                logoutButton.classList.add('d-none');
+
+                // Connect Inbox Tab
+                connectInboxStatusDiv.className = 'alert alert-info text-center py-4';
+                connectInboxStatusDiv.innerHTML = `<i class="fas fa-info-circle fa-2x mb-3"></i><p class="mb-0">Connect your Gmail account to enable direct inbox scanning.</p><p class="mb-0">Your emails will be analyzed for phishing threats.</p>`;
+                connectGmailButton.classList.remove('d-none');
+                disconnectGmailButton.classList.add('d-none');
+
+                // Scan Emails Tab
+                scanInstructionsDiv.classList.remove('d-none');
+                scanButton.classList.add('d-none');
+            }
+        }
+
+        // Handle click on the user status button
+        function handleUserStatusClick() {
+            if (!currentUserEmail) {
+                connectGmail();
+            }
+        }
+
+        // Load example emails
+        function loadPhishingExample() {
+            document.getElementById('senderEmail').value = 'support@security-alert.xyz';
+            document.getElementById('emailSubject').value = 'URGENT: Your Account Will Be Suspended!';
+            document.getElementById('emailBody').value = 'Dear Customer, Your account will be suspended unless you verify your information immediately. Click here now to avoid account closure. Act fast - limited time offer! Visit: http://malicious-link.com/verify';
+        }
+        
+        function loadLegitimateExample() {
+            document.getElementById('senderEmail').value = 'john.doe@company.com';
+            document.getElementById('emailSubject').value = 'Meeting Reminder - Tomorrow 2 PM';
+            document.getElementById('emailBody').value = 'Hi there, Just a friendly reminder about our meeting scheduled for tomorrow at 2 PM in Conference Room B. Please bring the project documents we discussed. Let me know if you need to reschedule.';
+        }
+        
+        // Analyze email function
+        document.getElementById('analyzeForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const senderEmail = document.getElementById('senderEmail').value;
+            const subject = document.getElementById('emailSubject').value;
+            const body = document.getElementById('emailBody').value;
+            const resultsDiv = document.getElementById('analysisResults');
+            
+            // Show loading
+            resultsDiv.innerHTML = `
+                <div class="text-center py-5">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <p class="mt-2">Analyzing email...</p>
+                </div>
+            `;
+            
+            // Clear detailed report before new analysis
+            document.getElementById('urgencyScore').innerText = 'N/A';
+            document.getElementById('urgencyProgressBar').style.width = '0%';
+            document.getElementById('grammarQuality').innerText = 'N/A';
+            document.getElementById('grammarQualityBadge').className = 'badge-custom';
+            document.getElementById('grammarQualityBadge').innerText = '';
+            document.getElementById('piiRequests').innerText = 'N/A';
+            document.getElementById('piiRequestsBadge').className = 'badge-custom';
+            document.getElementById('piiRequestsBadge').innerText = '';
+            document.getElementById('suspiciousKeywordsCount').innerText = '0';
+            document.getElementById('suspiciousKeywordsList').innerHTML = '<span class="badge-custom badge-info"><i class="fas fa-info-circle"></i>No suspicious keywords detected.</span>';
+            document.getElementById('totalUrlsFound').innerText = '0';
+            document.getElementById('suspiciousUrlsCount').innerText = '0';
+            document.getElementById('extractedUrls').innerHTML = '<li class="list-group-item text-muted list-group-item-url"><i class="fas fa-info-circle"></i>No URLs extracted yet.</li>';
+            document.getElementById('domainReputation').innerText = 'N/A';
+            document.getElementById('domainReputationBadge').className = 'badge-custom';
+            document.getElementById('domainReputationBadge').innerText = '';
+            document.getElementById('spoofingRisk').innerText = 'N/A';
+            document.getElementById('spoofingRiskBadge').className = 'badge-custom';
+            document.getElementById('spoofingRiskBadge').innerText = '';
+            document.getElementById('avoidanceAdviceList').innerHTML = '<li>No advice generated yet. Analyze an email first.</li>';
+
+
+            try {
+                const response = await fetch('/detect', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ senderEmail, subject, body })
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    const isPhishing = result.is_phishing;
+                    const confidence = (result.confidence * 100).toFixed(1);
+                    const phishingProb = (result.phishing_probability * 100).toFixed(1);
+                    
+                    resultsDiv.innerHTML = `
+                        <div class="alert ${isPhishing ? 'alert-phishing' : 'alert-safe'} text-center">
+                            <h4><i class="fas ${isPhishing ? 'fa-exclamation-triangle' : 'fa-check-circle'}"></i></h4>
+                            <h5>${isPhishing ? '🚨 PHISHING DETECTED' : '✅ EMAIL APPEARS SAFE'}</h5>
+                        </div>
+                        <div class="text-center mt-3">
+                            <span class="badge bg-secondary">${isPhishing ? 'High Risk' : 'Low Risk'}</span>
+                            <h3 class="mt-2">${confidence}%</h3>
+                            <p class="text-muted small">Confidence</p>
+                        </div>
+                        <div class="progress mt-3">
+                            <div class="progress-bar ${isPhishing ? 'bg-phishing' : 'bg-safe'}" 
+                                 style="width: ${confidence}%">
+                                 ${confidence}%
+                            </div>
+                        </div>
+                        <div class="mt-4">
+                            <h6><i class="fas fa-lightbulb text-info me-2"></i>Key Findings</h6>
+                            <ul class="list-unstyled">
+                                <li><i class="fas fa-circle-info text-muted me-2 small"></i>Email appears ${isPhishing ? 'suspicious' : 'legitimate'} based on analysis.</li>
+                                ${isPhishing ? `<li><i class="fas fa-circle-info text-muted me-2 small"></i>High phishing probability: ${phishingProb}%</li>` : ''}
+                            </ul>
+                        </div>
+                    `;
+
+                    // Update Detailed Analysis Report
+                    const urgencyScore = result.urgency_score ?? 0;
+                    document.getElementById('urgencyScore').innerText = urgencyScore;
+                    document.getElementById('urgencyProgressBar').style.width = `${(urgencyScore / 10) * 100}%`; // Assuming max score is 10
+
+                    const grammarQuality = result.grammar_quality ?? 'N/A';
+                    document.getElementById('grammarQuality').innerText = grammarQuality;
+                    const grammarBadge = document.getElementById('grammarQualityBadge');
+                    if (grammarQuality === "100%") {
+                        grammarBadge.className = 'badge-custom badge-safe';
+                        grammarBadge.innerHTML = '<i class="fas fa-check-circle"></i>Excellent';
+                    } else if (grammarQuality === "70%") {
+                        grammarBadge.className = 'badge-custom badge-warning';
+                        grammarBadge.innerHTML = '<i class="fas fa-exclamation-triangle"></i>Moderate';
+                    } else {
+                        grammarBadge.className = 'badge-custom badge-info';
+                        grammarBadge.innerHTML = '<i class="fas fa-info-circle"></i>N/A';
+                    }
+
+                    const piiRequests = result.personal_info_requests;
+                    document.getElementById('piiRequests').innerText = piiRequests ? 'Yes Found' : 'None Found';
+                    const piiBadge = document.getElementById('piiRequestsBadge');
+                    if (piiRequests) {
+                        piiBadge.className = 'badge-custom badge-danger';
+                        piiBadge.innerHTML = '<i class="fas fa-exclamation-circle"></i>Detected';
+                    } else {
+                        piiBadge.className = 'badge-custom badge-safe';
+                        piiBadge.innerHTML = '<i class="fas fa-check-circle"></i>None';
+                    }
+                    
+                    // Keywords Tab
+                    document.getElementById('suspiciousKeywordsCount').innerText = result.suspicious_keywords_count ?? '0';
+                    const suspiciousKeywordsList = document.getElementById('suspiciousKeywordsList');
+                    suspiciousKeywordsList.innerHTML = '';
+                    if (result.suspicious_keywords_list && result.suspicious_keywords_list.length > 0) {
+                        result.suspicious_keywords_list.forEach(kw => {
+                            suspiciousKeywordsList.innerHTML += `<span class="badge-custom badge-danger"><i class="fas fa-tag"></i>${kw}</span>`;
+                        });
+                    } else {
+                        suspiciousKeywordsList.innerHTML = '<span class="badge-custom badge-info"><i class="fas fa-info-circle"></i>No suspicious keywords detected.</span>';
+                    }
+
+                    // URL Analysis Tab
+                    document.getElementById('totalUrlsFound').innerText = result.total_urls_found ?? '0';
+                    document.getElementById('suspiciousUrlsCount').innerText = result.suspicious_urls_count ?? '0';
+                    const urlsList = document.getElementById('extractedUrls');
+                    urlsList.innerHTML = '';
+                    if (result.extracted_urls && result.extracted_urls.length > 0) {
+                        result.extracted_urls.forEach(url => {
+                            urlsList.innerHTML += `<li class="list-group-item list-group-item-url"><i class="fas fa-link"></i><a href="${url}" target="_blank">${url}</a></li>`;
+                        });
+                    } else {
+                        urlsList.innerHTML = '<li class="list-group-item text-muted list-group-item-url"><i class="fas fa-info-circle"></i>No URLs extracted yet.</li>';
+                    }
+
+                    // Sender Analysis Tab
+                    const domainReputation = result.domain_reputation ?? 'N/A';
+                    document.getElementById('domainReputation').innerText = domainReputation;
+                    const domainBadge = document.getElementById('domainReputationBadge');
+                    if (domainReputation === "Trusted") {
+                        domainBadge.className = 'badge-custom badge-safe';
+                        domainBadge.innerHTML = '<i class="fas fa-shield-alt"></i>Trusted';
+                    } else if (domainReputation === "Unusual/Unknown") {
+                        domainBadge.className = 'badge-custom badge-warning';
+                        domainBadge.innerHTML = '<i class="fas fa-question-circle"></i>Unusual/Unknown';
+                    } else {
+                        domainBadge.className = 'badge-custom badge-danger';
+                        domainBadge.innerHTML = '<i class="fas fa-times-circle"></i>Untrusted';
+                    }
+
+                    const spoofingRisk = result.spoofing_risk ?? 'N/A';
+                    document.getElementById('spoofingRisk').innerText = spoofingRisk;
+                    const spoofingBadge = document.getElementById('spoofingRiskBadge');
+                    if (spoofingRisk === "Low Risk") {
+                        spoofingBadge.className = 'badge-custom badge-safe';
+                        spoofingBadge.innerHTML = '<i class="fas fa-check-circle"></i>Low Risk';
+                    } else if (spoofingRisk === "Medium Risk") {
+                        spoofingBadge.className = 'badge-custom badge-warning';
+                        spoofingBadge.innerHTML = '<i class="fas fa-exclamation-triangle"></i>Medium Risk';
+                    } else {
+                        spoofingBadge.className = 'badge-custom badge-danger';
+                        spoofingBadge.innerHTML = '<i class="fas fa-exclamation-circle"></i>High Risk';
+                    }
+
+                    // Avoidance Advice Tab
+                    const avoidanceAdviceList = document.getElementById('avoidanceAdviceList');
+                    avoidanceAdviceList.innerHTML = '';
+                    if (result.avoidance_advice && result.avoidance_advice.length > 0) {
+                        result.avoidance_advice.forEach(advice => {
+                            avoidanceAdviceList.innerHTML += `<li>${advice}</li>`;
+                        });
+                    } else {
+                        avoidanceAdviceList.innerHTML = '<li>No specific advice generated for this email.</li>';
+                    }
+
+                } else {
+                    resultsDiv.innerHTML = `
+                        <div class="alert alert-danger">
+                            <i class="fas fa-exclamation-circle"></i> <strong>Error:</strong> ${result.error}
+                            <hr>
+                            <small>Try training a model first using the "Train Model" tab.</small>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                resultsDiv.innerHTML = `
+                    <div class="alert alert-danger">
+                        <i class="fas fa-exclamation-circle"></i> <strong>Connection Error:</strong> ${error.message}
+                    </div>
+                `;
+            }
+        });
+        
+        // Train model function
+        async function trainModel() {
+            new bootstrap.Tab(document.getElementById('train-tab')).show();
+            const resultsDiv = document.getElementById('trainingResults');
+            
+            resultsDiv.innerHTML = `
+                <div class="alert alert-info">
+                    <div class="spinner-border spinner-border-sm me-2" role="status"></div>
+                    Training model... This may take a few minutes.
+                </div>
+            `;
+            
+            try {
+                const response = await fetch('/train-model', { method: 'POST' });
+                const result = await response.json();
+                
+                if (response.ok) {
+                    resultsDiv.innerHTML = `
+                        <div class="alert alert-success">
+                            <i class="fas fa-check-circle"></i> <strong>${result.message}</strong>
+                            <hr>
+                            <p class="mb-1"><strong>Best Model:</strong> ${result.best_model}</p>
+                            <p class="mb-0"><strong>Accuracy:</strong> ${(result.accuracy * 100).toFixed(2)}%</p>
+                        </div>
+                        <div class="mt-2">
+                            <small class="text-success">✅ You can now analyze emails using the "Analyze Email" tab!</small>
+                        </div>
+                    `;
+                } else {
+                    resultsDiv.innerHTML = `
+                        <div class="alert alert-danger">
+                            <i class="fas fa-exclamation-circle"></i> <strong>Training Failed:</strong> ${result.error}
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                resultsDiv.innerHTML = `
+                    <div class="alert alert-danger">
+                        <i class="fas fa-exclamation-circle"></i> <strong>Error:</strong> ${error.message}
+                    </div>
+                `;
+            }
+        }
+
+        // Scan emails function
+        async function scanEmails() {
+            const resultsDiv = document.getElementById('scanResults');
+            
+            // Check if user is connected
+            if (!currentUserEmail) {
+                resultsDiv.innerHTML = `
+                    <div class="alert alert-warning text-center py-4">
+                        <i class="fas fa-exclamation-triangle fa-2x mb-3"></i>
+                        <p class="mb-0">Please connect your Gmail account first via the "Connect Inbox" tab to scan emails.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            resultsDiv.innerHTML = `
+                <div class="text-center py-5">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <p class="mt-2">Scanning and analyzing emails...</p>
+                </div>
+            `;
+
+            try {
+                const response = await fetch('/scan-emails');
+                const result = await response.json();
+
+                if (response.ok) {
+                    if (result.emails && result.emails.length > 0) {
+                        let emailsHtml = `<h5 class="mb-3">Scanned Emails (${result.emails.length})</h5>`;
+                        result.emails.forEach(email => {
+                            const isPhishing = email.is_phishing;
+                            const confidence = (email.confidence * 100).toFixed(1);
+                            const statusClass = isPhishing ? 'alert-phishing' : 'alert-safe';
+                            const statusIcon = isPhishing ? 'fa-exclamation-triangle' : 'fa-check-circle';
+                            const statusText = isPhishing ? 'PHISHING DETECTED' : 'EMAIL APPEARS SAFE';
+
+                            let avoidanceAdviceHtml = '';
+                            if (email.detailed_analysis && email.detailed_analysis.avoidance_advice && email.detailed_analysis.avoidance_advice.length > 0) {
+                                avoidanceAdviceHtml = `
+                                    <div class="avoidance-advice-section mt-3">
+                                        <h6><i class="fas fa-lightbulb me-2"></i>How to Protect Yourself:</h6>
+                                        <ul>
+                                            ${email.detailed_analysis.avoidance_advice.map(advice => `<li>${advice}</li>`).join('')}
+                                        </ul>
+                                    </div>
+                                `;
+                            }
+
+
+                            emailsHtml += `
+                                <div class="card scanned-email-card ${statusClass}">
+                                    <div class="card-body">
+                                        <div class="d-flex align-items-center mb-2">
+                                            <i class="fas ${statusIcon} fa-lg me-2"></i>
+                                            <h6 class="card-title mb-0">
+                                                ${email.subject}
+                                                <span class="status-badge ${isPhishing ? 'bg-phishing' : 'bg-safe'}">${confidence}%</span>
+                                            </h6>
+                                        </div>
+                                        <p class="card-subtitle mb-2">From: ${email.sender}</p>
+                                        <div class="email-meta">
+                                            <i class="fas fa-calendar-alt"></i> ${new Date(email.date).toLocaleString()}
+                                            <span class="ms-3"><i class="fas fa-code-branch"></i> Source: ${email.source}</span>
+                                        </div>
+                                        <button class="btn btn-sm btn-outline-info mt-3 btn-view-details" type="button" data-bs-toggle="collapse" data-bs-target="#emailDetails-${email.id}" aria-expanded="false" aria-controls="emailDetails-${email.id}">
+                                            View Detailed Analysis
+                                        </button>
+                                        <div class="collapse detailed-analysis-collapse" id="emailDetails-${email.id}">
+                                            <h6 class="mt-3">Detailed Analysis:</h6>
+                                            <ul class="list-unstyled small">
+                                                <li><strong>Urgency Score:</strong> ${email.detailed_analysis.urgency_score ?? 'N/A'}</li>
+                                                <li><strong>Grammar Quality:</strong> ${email.detailed_analysis.grammar_quality ?? 'N/A'}</li>
+                                                <li><strong>Personal Info Requests:</strong> ${email.detailed_analysis.personal_info_requests ? 'Yes' : 'No'}</li>
+                                                <li><strong>Suspicious Keywords:</strong> ${email.detailed_analysis.suspicious_keywords_list && email.detailed_analysis.suspicious_keywords_list.length > 0 ? email.detailed_analysis.suspicious_keywords_list.join(', ') : 'None'}</li>
+                                                <li><strong>Total URLs:</strong> ${email.detailed_analysis.total_urls_found ?? 0}</li>
+                                                <li><strong>Suspicious URLs:</strong> ${email.detailed_analysis.suspicious_urls_count ?? 0}</li>
+                                                <li><strong>Domain Reputation:</strong> ${email.detailed_analysis.domain_reputation ?? 'N/A'}</li>
+                                                <li><strong>Spoofing Risk:</strong> ${email.detailed_analysis.spoofing_risk ?? 'N/A'}</li>
+                                            </ul>
+                                            ${avoidanceAdviceHtml}
+                                        </div>
+                                    </div>
+                                </div>
+                            `;
+                        });
+                        resultsDiv.innerHTML = emailsHtml;
+                    } else {
+                        resultsDiv.innerHTML = `
+                            <div class="alert alert-info text-center py-4">
+                                <i class="fas fa-info-circle fa-2x mb-3"></i>
+                                <p class="mb-0">${result.message || 'No emails found or scanned.'}</p>
+                            </div>
+                        `;
+                    }
+                } else {
+                    resultsDiv.innerHTML = `
+                        <div class="alert alert-danger">
+                            <i class="fas fa-exclamation-circle"></i> <strong>Error:</strong> ${result.error}
+                            <hr>
+                            <small>Please ensure your Gmail API credentials are correctly set up.</small>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                resultsDiv.innerHTML = `
+                    <div class="alert alert-danger">
+                        <i class="fas fa-exclamation-circle"></i> <strong>Connection Error:</strong> ${error.message}
+                    </div>
+                `;
+            }
+        }
+        
+        // Health check function
+        async function checkHealth() {
+            try {
+                const response = await fetch('/api/health');
+                const result = await response.json();
+                
+                const modelStatusText = result.model_loaded ? '✅ Model Loaded' : '⚠️ No Model';
+                const emailApiModuleStatusText = result.email_api_module_available ? '✅ Email API Module Available' : '❌ Email API Module Not Available';
+                const userConnectedToGmailText = result.user_connected_to_gmail === 'connected' ? '✅ Gmail Connected' : '❌ Gmail Not Connected';
+
+                alert(`System Status: ${result.status}\nModel Status: ${modelStatusText}\nEmail API Module Status: ${emailApiModuleStatusText}\nUser Gmail Connection: ${userConnectedToGmailText}\nTimestamp: ${result.timestamp}\n\n${result.note || ''}`);
+            } catch (error) {
+                alert('Error checking system health: ' + error.message);
+            }
+        }
+
+        // Connect Gmail function (initiates OAuth)
+        function connectGmail() {
+            window.location.href = '/api/auth/google';
+        }
+
+        // Logout function
+        function logout() {
+            window.location.href = '/logout';
+        }
+
+        // Initial load of example data and update status
+        document.addEventListener('DOMContentLoaded', () => {
+            loadLegitimateExample(); // Load a default example on page load
+            updateHeaderStatus(); // Update header status on page load
+
+            // Check for OAuth success/error parameters in URL
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.has('auth_success')) {
+                alert('Gmail account connected successfully!');
+                // Clear URL params to prevent re-alert on refresh
+                window.history.replaceState({}, document.title, window.location.pathname);
+            } else if (urlParams.has('auth_error')) {
+                alert('Error connecting Gmail account: ' + urlParams.get('auth_error'));
+                window.history.replaceState({}, document.title, window.location.pathname);
+            } else if (urlParams.has('logout_success')) {
+                alert('Logged out successfully!');
+                window.history.replaceState({}, document.title, window.location.pathname);
+            }
+        });
+
+        // Handle tab clicks to ensure correct state is shown
+        document.getElementById('mainTabs').addEventListener('shown.bs.tab', function (event) {
+            const activeTabId = event.target.id;
+            if (activeTabId === 'scan-tab' || activeTabId === 'connect-inbox-tab') {
+                // When Scan Emails or Connect Inbox tab is shown, ensure instructions/button are correct
+                updateHeaderStatus(); 
+            }
+        });
+    </script>
+</body>
+</html>

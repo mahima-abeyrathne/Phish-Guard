@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feedback - PhishGuard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f0f2f5;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .navbar {
+            background-color: #ffffff;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            padding: 1rem 0;
+        }
+        .navbar-brand {
+            font-weight: 600;
+            color: #333;
+            display: flex;
+            align-items: center;
+        }
+        .navbar-brand img {
+            height: 70px;
+            margin-right: 10px;
+        }
+        .card {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            margin-bottom: 1.5rem;
+        }
+        .card-header {
+            background-color: #f8f9fa;
+            border-bottom: 1px solid #e9ecef;
+            border-top-left-radius: 12px;
+            border-top-right-radius: 12px;
+            font-weight: 600;
+            color: #333;
+            padding: 1rem 1.5rem;
+            display: flex;
+            align-items: center;
+        }
+        .card-header i {
+            margin-right: 10px;
+            color: #007bff;
+        }
+        .btn-primary {
+            background-color: #007bff;
+            border-color: #007bff;
+            border-radius: 8px;
+            padding: 0.75rem 1.5rem;
+            font-weight: 600;
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+        }
+        .btn-primary:hover {
+            background-color: #0056b3;
+            border-color: #0056b3;
+        }
+        .rating-stars .fa-star {
+            font-size: 2rem;
+            color: #e0e0e0;
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+        .rating-stars .fa-star.checked {
+            color: #ffc107; /* Gold color for checked stars */
+        }
+        footer {
+            background-color: #f8f9fa;
+            color: #6c757d;
+            padding: 2rem 0;
+            margin-top: 3rem;
+            border-top: 1px solid #e9ecef;
+        }
+        footer a {
+            color: #007bff;
+            text-decoration: none;
+        }
+        footer a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light">
+        <div class="container">
+            <a class="navbar-brand" href="{{ url_for('index') }}">
+                <img src="{{ url_for('static', filename='logo.png') }}" alt="PhishGuard Logo">
+            </a>
+            <span class="navbar-text ms-auto me-3 d-none d-md-block">
+                Advanced NLP-powered email phishing detection using machine learning algorithms
+            </span>
+            <div class="d-flex align-items-center">
+                <a href="{{ url_for('index') }}" class="btn btn-outline-secondary me-3">
+                    <i class="fas fa-home"></i> Home
+                </a>
+                <button class="btn btn-outline-secondary" onclick="checkHealth()">
+                    <i class="fas fa-heartbeat"></i> System Status
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-5">
+        <div class="card">
+            <div class="card-header">
+                <i class="fas fa-comment-dots"></i> Provide Feedback
+            </div>
+            <div class="card-body">
+                <p class="lead">Your feedback helps us improve PhishGuard. Please share your thoughts and suggestions.</p>
+                
+                <form id="feedbackForm">
+                    <div class="mb-4">
+                        <label for="rating" class="form-label">Overall Rating:</label>
+                        <div class="rating-stars" id="ratingStars">
+                            <i class="far fa-star" data-value="1"></i>
+                            <i class="far fa-star" data-value="2"></i>
+                            <i class="far fa-star" data-value="3"></i>
+                            <i class="far fa-star" data-value="4"></i>
+                            <i class="far fa-star" data-value="5"></i>
+                        </div>
+                        <input type="hidden" id="selectedRating" name="rating" value="0">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="feedbackText" class="form-label">Your Feedback:</label>
+                        <textarea class="form-control" id="feedbackText" rows="6" 
+                                  placeholder="Tell us what you think about PhishGuard..." required></textarea>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Your Email (Optional):</label>
+                        <input type="email" class="form-control" id="email" 
+                               placeholder="Enter your email if you'd like a response">
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="fas fa-paper-plane"></i> Submit Feedback
+                    </button>
+                </form>
+
+                <div id="feedbackMessage" class="mt-4 alert d-none"></div>
+
+                <a href="{{ url_for('index') }}" class="btn btn-outline-secondary mt-3">
+                    <i class="fas fa-arrow-left"></i> Back to Home
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <footer class="bg-light text-center text-lg-start mt-5 py-4">
+        <div class="container p-4">
+            <div class="row">
+                <div class="col-lg-6 col-md-12 mb-4 mb-md-0">
+                    <h5 class="text-uppercase">PhishGuard</h5>
+                    <p>
+                        Your advanced solution for detecting and preventing email phishing attacks.
+                        Leveraging NLP and ML to keep your inbox safe.
+                    </p>
+                </div>
+                <div class="col-lg-3 col-md-6 mb-4 mb-md-0">
+                    <h5 class="text-uppercase">Links</h5>
+                    <ul class="list-unstyled mb-0">
+                        <li>
+                            <a href="{{ url_for('index') }}#analyze" class="text-dark">Analyze Email</a>
+                        </li>
+                        <li>
+                            <a href="{{ url_for('index') }}#scan" class="text-dark">Scan Emails</a>
+                        </li>
+                        <li>
+                            <a href="{{ url_for('index') }}#connect-inbox" class="text-dark">Connect Inbox</a>
+                        </li>
+                        <li>
+                            <a href="{{ url_for('index') }}#train" class="text-dark">Train Model</a>
+                        </li>
+                        <li>
+                            <a href="{{ url_for('about_page') }}" class="text-dark">About</a>
+                        </li>                        
+                    </ul>
+                </div>
+                <div class="col-lg-3 col-md-6 mb-4 mb-md-0">
+                    <h5 class="text-uppercase">Contact</h5>
+                    <ul class="list-unstyled mb-0">
+                        <li>
+                            <a href="{{ url_for('support_page') }}" class="text-dark">Support</a>
+                        </li>
+                        <li>
+                            <a href="{{ url_for('feedback_page') }}" class="text-dark">Feedback</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="text-center p-3" style="background-color: rgba(0, 0, 0, 0.05);">
+            © 2025 PhishGuard. All rights reserved.
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let currentRating = 0;
+        const ratingStars = document.getElementById('ratingStars');
+        const selectedRatingInput = document.getElementById('selectedRating');
+        const feedbackForm = document.getElementById('feedbackForm');
+        const feedbackMessage = document.getElementById('feedbackMessage');
+
+        ratingStars.addEventListener('click', (e) => {
+            if (e.target.classList.contains('fa-star')) {
+                const value = parseInt(e.target.dataset.value);
+                currentRating = value;
+                selectedRatingInput.value = value;
+                updateStars();
+            }
+        });
+
+        ratingStars.addEventListener('mouseover', (e) => {
+            if (e.target.classList.contains('fa-star')) {
+                const value = parseInt(e.target.dataset.value);
+                highlightStars(value);
+            }
+        });
+
+        ratingStars.addEventListener('mouseout', () => {
+            highlightStars(currentRating);
+        });
+
+        function updateStars() {
+            const stars = ratingStars.querySelectorAll('.fa-star');
+            stars.forEach(star => {
+                const value = parseInt(star.dataset.value);
+                if (value <= currentRating) {
+                    star.classList.remove('far');
+                    star.classList.add('fas', 'checked');
+                } else {
+                    star.classList.remove('fas', 'checked');
+                    star.classList.add('far');
+                }
+            });
+        }
+
+        function highlightStars(count) {
+            const stars = ratingStars.querySelectorAll('.fa-star');
+            stars.forEach(star => {
+                const value = parseInt(star.dataset.value);
+                if (value <= count) {
+                    star.classList.remove('far');
+                    star.classList.add('fas');
+                } else {
+                    star.classList.remove('fas');
+                    star.classList.add('far');
+                }
+            });
+        }
+
+        feedbackForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            feedbackMessage.classList.add('d-none'); // Hide previous messages
+
+            const feedbackData = {
+                rating: parseInt(selectedRatingInput.value),
+                feedback: document.getElementById('feedbackText').value,
+                email: document.getElementById('email').value
+            };
+
+            // Simulate API call
+            console.log('Submitting feedback:', feedbackData);
+            feedbackMessage.classList.remove('d-none', 'alert-danger', 'alert-success');
+            feedbackMessage.classList.add('alert-info');
+            feedbackMessage.innerHTML = '<div class="spinner-border spinner-border-sm me-2" role="status"></div> Submitting feedback...';
+
+            try {
+                // In a real application, you would send this data to a backend API
+                await new Promise(resolve => setTimeout(resolve, 1500)); // Simulate network delay
+
+                feedbackMessage.classList.remove('alert-info');
+                feedbackMessage.classList.add('alert-success');
+                feedbackMessage.innerHTML = '<i class="fas fa-check-circle"></i> Thank you for your feedback!';
+                feedbackForm.reset();
+                currentRating = 0;
+                updateStars();
+            } catch (error) {
+                console.error('Feedback submission error:', error);
+                feedbackMessage.classList.remove('alert-info');
+                feedbackMessage.classList.add('alert-danger');
+                feedbackMessage.innerHTML = '<i class="fas fa-exclamation-circle"></i> Failed to submit feedback. Please try again.';
+            }
+        });
+
+        async function checkHealth() {
+            try {
+                const response = await fetch('/api/health');
+                const result = await response.json();
+                
+                const modelStatusText = result.model_loaded ? '✅ Model Loaded' : '⚠️ No Model';
+                const emailApiModuleStatusText = result.email_api_module_available ? '✅ Email API Module Available' : '❌ Email API Module Not Available';
+                const userConnectedToGmailText = result.user_connected_to_gmail === 'connected' ? '✅ Gmail Connected' : '❌ Gmail Not Connected';
+
+                alert(`System Status: ${result.status}\nModel Status: ${modelStatusText}\nEmail API Module Status: ${emailApiModuleStatusText}\nUser Gmail Connection: ${userConnectedToGmailText}\nTimestamp: ${result.timestamp}\n\n${result.note || ''}`);
+            } catch (error) {
+                alert('Error checking system health: ' + error.message);
+            }
+        }
+    </script>
+</body>
+</html>
