@@ -1,4 +1,4 @@
-# PhishGuard AI - Email Phishing Detection Tool
+# PhishGuard - Email Phishing Detection Tool
 
 ![PhishGuard AI](https://img.shields.io/badge/PhishGuard-AI%20Powered-blue)
 ![Python](https://img.shields.io/badge/Python-3.8%2B-green)
